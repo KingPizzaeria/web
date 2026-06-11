@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>King Khans | Pizza, Kebabs, Shawarma in Laos</title>
   <meta name="description" content="King Khans serves pizza, kebabs, shawarma, rice, pasta, burgers, garlic bread, and fast food in Laos. Order through WhatsApp or Foodpanda.">
+  <link rel="icon" type="image/svg+xml" href="KKlogo.svg">
   <script src="https://cdn.tailwindcss.com"></script>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -58,6 +59,21 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .menu-card { content-visibility: auto; contain-intrinsic-size: 380px; }
+  
+    .burst-shape {
+      clip-path: polygon(50% 0%, 61% 11%, 76% 5%, 83% 20%, 98% 21%, 97% 37%, 100% 52%, 91% 65%, 96% 80%, 82% 87%, 77% 100%, 62% 95%, 49% 100%, 35% 95%, 22% 100%, 15% 85%, 2% 80%, 9% 64%, 0% 50%, 8% 35%, 1% 20%, 16% 14%, 22% 0%, 38% 5%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 60px;
+      height: 60px;
+      padding: 0;
+      text-align: center;
+      line-height: 1.1;
+      transform: rotate(-5deg);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    }
+
   </style>
 </head>
 <body>
@@ -67,107 +83,142 @@
     const { useEffect, useMemo, useRef, useState } = React;
     const WHATSAPP = 'https://wa.me/8562095976027';
     const FOODPANDA = 'https://www.foodpanda.la/en/restaurant/h07r/king-pizzaeria-restaurant';
-    const sequenceFrames = Array.from({ length: 180 }, (_, index) => `sequence/${String(index + 1).padStart(4, '0')}.jpg`);
-    const galleryImages = ['sequence/0008.jpg', 'sequence/0026.jpg', 'sequence/0044.jpg', 'sequence/0064.jpg', 'sequence/0086.jpg', 'sequence/0109.jpg', 'sequence/0135.jpg', 'sequence/0188.jpg'];
+    const galleryImages = [
+      'https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1648823153756-7870dc780d6f?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?auto=format&fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80'
+    ];
+    // TODO: Replace KKlogo.svg placeholders with actual food photography once professional images are available
+    const foodImages = {
+      kebabs: 'KKlogo.svg',
+      pizzas: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80',
+      pasta: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?auto=format&fit=crop&w=600&q=80',
+      rice: 'https://images.unsplash.com/photo-1585238341710-4913a3f5d25e?auto=format&fit=crop&w=600&q=80',
+      'fast-food': 'https://images.unsplash.com/photo-1528693687580-136b0edaed51?auto=format&fit=crop&w=600&q=80',
+      'garlic-bread': 'https://images.unsplash.com/photo-1541519227354-08fa5d50c44d?auto=format&fit=crop&w=600&q=80'
+    };
     const navLinks = [
       ['Home', '#home'], ['Pizzas', '#pizzas'], ['Kebabs & Shawarma', '#kebabs'], ['Pasta', '#pasta'], ['Rice', '#rice'],
       ['Fast Food & Burgers', '#fast-food'], ['Garlic Bread', '#garlic-bread'], ['Offers', '#offers'], ['Contact', '#contact']
     ];
-    const menuData = [
-      { id: 'pizzas', label: 'Pizzas', image: 'sequence/0014.jpg', items: [
-        ['Marinara Pizza', 'Tomato Sauce, Garlic oil, Oregano (Without Cheese)', '109 k', 109],
-        ['Margherita Pizza', 'Tomato Sauce, Mozzarella, Basil', '129 k', 129],
-        ['4 Cheese Pizza', 'Tomato Sauce, Mozzarella, Brie, Gorgonzola, Grana', '209 k', 209],
-        ['Fungi Pizza', 'Tomato Sauce, Mozzarella, Basil, Mushroom', '189 k', 189],
-        ['Cheese Corn Pizza', 'Tomato Sauce, Mozzarella, Pineapple Corn', '189 k', 189],
-        ['Nutella Pizza', 'Mix Dried Fruits topping', '169 k', 169],
-        ['Mix Vegetables Pizza', 'Green peas, Corn, Carrot, Coriander', '189 k', 189],
-        ['Fresh Vegetariana Pizza', 'Potato, Capsicum, Eggplant, Zucchini', '169 k', 169],
-        ['Supreme vegetable Pizza', 'fresh Mix Vegetables, Black Olive, Oregano, Jalapenos', '199 k', 199],
-        ['Falafel & Hummus Pizza', 'falafel, Hummus, Black Olives (Without Cheese)', '199 k', 199],
-        ['Beef Salami Pizza', 'Tomato Sauce, Mozzarella, Beef Salami', '199 k', 199],
-        ['Brie/Gorgonzola Pizza', 'Brie, Capsicum, Gorgonzola, onions', '209 k', 209],
-        ['Napoli / Sicilian Pizza', 'Anchovies, Capers, Oregano, Black Olives', '209 k', 209],
-        ['Ton no Capola Pizza', 'Tuna, Onion, Choose One Ingredient', '189 k', 189],
-        ['Frutti Di Mare Pizza', 'Tomato Sauce, Mozzarella, Mix Seafood, Black Olives', '209 k', 209],
-        ['Shrimp & Crab Stick Pizza', 'Tomato Sauce, Mozzarella, Shrimp, Crab Stick', '209 k', 209],
-        ['Chicken Kebab Pizza', 'Tomato Sauce, Mozzarella, Shawarma Chicken, Coriander', '189 k', 189],
-        ['BBQ Chicken Pizza', 'Tomato Sauce, Capsicum, Eggplant, Zucchini', '209 k', 209],
-        ['Supreme Chicken Pizza', 'Tomato Sauce, Mozzarella, Fajita Chicken, Bell pepper, Oregano', '209 k', 209],
-        ['Hot & Spicy Chicken Pizza', 'Tomato Sauce, Mozzarella, Mix Vegetable, Fajita Chicken, Jalapeno', '209 k', 209],
-        ['Seekh Kabab Pizza', 'Chicken 219 k / Beef 249 k', '219-249 k', 219],
-        ['Hawaiian Pizza', 'Chicken 119 k / Beef 209 k', '119-209 k', 119],
-        ['Supreme beef Salami', 'Beef salami supreme pizza', '249 k', 249],
-        ['4 Season (1)', 'Four-season pizza option one', '199 k', 199],
-        ['4 Season (2)', 'Four-season pizza option two', '209 k', 209],
-        ['Beef Hot & Spicy', 'Spicy beef pizza', '249 k', 249],
-        ['Mayonnaise Pizza', 'Chicken 199 k / Beef 219 k', '199-219 k', 199],
-        ['French Fries Pizza', 'Pizza topped with french fries', '189 k', 189],
-        ['Beef Meatball', 'Beef meatball pizza', '209 k', 209],
-        ['Topping Options', 'Choose extra toppings from the topping section', '129 k', 129]
-      ]},
-      { id: 'toppings', label: 'Ingredients / Toppings', image: 'sequence/0044.jpg', items: [
-        ['Vegetables', 'French Fries, Fried Onion, Coriander, Fresh Chili, Pineapple, Oregano, Fresh tomato, Black Olives, Basil, Capsicum, Capers, Onion, Potato, Mushroom, Zucchini, Eggplant, Jalapeno, Corn, Dressing, Garlic Sauce, Ketchup Sauce, etc.', '29 k each', 29],
-        ['Meat', 'Anchovies, Tuna Fish, Crab Stick, Shrimp, Mix Seafood, Beef Meatball, Beef Sausage, Beef Salami, Beef Seekh Kabab, Shredded chicken, Chicken Sausage, Shawarma Chicken, Grill Chicken, Fajita Chicken, BBQ Chicken, Chicken Seekh Kabab, Mix Sausage, etc.', '49 k each', 49],
-        ['Cheese', 'Mozzarella, Cream Cheese, Parmesan, Blue Cheese, Gorgonzola, Cheddar', '49 k each', 49]
-      ]},
-      { id: 'garlic-bread', label: 'Cheese Garlic Bread', image: 'sequence/0064.jpg', items: [
-        ['Cheese Garlic Bread', 'Garlic bread with cheese', '139 k', 139],
-        ['Chicken Cheese Garlic Bread', 'Garlic bread with chicken and cheese', '159 k', 159],
-        ['Beef Cheese Garlic Bread', 'Garlic bread with beef and cheese', '189 k', 189],
-        ['Tuna Cheese Garlic Bread', 'Garlic bread with tuna and cheese', '149 k', 149],
-        ['Supreme Cheese Garlic Bread', 'Beef 219 k / Chicken 199 k / Vege 189 k', '189-219 k', 189]
-      ]},
-      { id: 'kebabs', label: 'Kebab & Shawarma', image: 'sequence/0086.jpg', items: [
-        ['Chicken Shawarma', 'Fresh chicken shawarma', '149 k', 149],
-        ['Beef Shawarma', 'Fresh beef shawarma', '169 k', 169],
-        ['Vegetable Shawarma', 'Vegetable shawarma wrap', '129 k', 129],
-        ['Chicken Shawarma Platter', 'Chicken shawarma platter', '189 k', 189],
-        ['Grill Vegetable Platter', 'Grilled vegetable platter', '189 k', 189],
-        ['Falafel Shawarma', 'Falafel shawarma wrap', '149 k', 149],
-        ['Falafel & Hummus', 'Falafel with hummus', '169 k', 169],
-        ['Doner Kebab', 'Doner kebab, platter available 219 k', '169 k', 169],
-        ['Doner Kebab Platter', 'Doner kebab platter', '219 k', 219],
-        ['Beef Shawarma Platter', 'Beef shawarma platter', '219 k', 219],
-        ['Sheesh Kebab Shawarma (Chicken/Beef)', 'Chicken or beef sheesh kebab shawarma', '149-169 k', 149],
-        ['Chicken Tikka', 'Chicken tikka', '169 k', 169],
-        ['Chicken Seekh Kabab', 'Chicken seekh kabab', '169 k', 169],
-        ['Turkish Sujuk Kebab', 'Turkish sujuk kebab', '189 k', 189],
-        ['BBQ Chicken leg quarters', 'BBQ chicken leg quarters', '169 k', 169],
-        ['Chana Chaat', 'Chana chaat', '149 k', 149],
-        ['Panipuri Golgappa', 'Panipuri golgappa', '169 k', 169],
-        ['Classic Bread / Pita Bread', 'Classic bread or pita bread', '29 k', 29]
-      ]},
-      { id: 'rice', label: 'Rice', image: 'sequence/0109.jpg', items: [
-        ['Mutton Biryani / Palao', 'Mutton biryani or palao', '209 k', 209],
-        ['Chicken Biryani / Pulau', 'Chicken biryani 179 k / chicken pulau 169 k', '169-179 k', 169],
-        ['Beef Biryani / Pulau', 'Beef biryani or pulau', '189 k', 189],
-        ['Vegetable Biryani / Pulau', 'Vegetable biryani or pulau', '149 k', 149],
-        ['Egg Fried Rice', 'Egg fried rice', '99 k', 99],
-        ['Chicken Fried Rice', 'Chicken fried rice', '109 k', 109],
-        ['Beef Fried Rice', 'Beef fried rice', '119 k', 119],
-        ['Seafood Fried Rice', 'Seafood fried rice', '119 k', 119],
-        ['Steam Rice', 'Steamed rice options', '69-89 k', 69]
+        const menuData = [
+      { id: 'kebabs', label: 'Kebab & Shawarna', image: 'sequence/0086.jpg', items: [
+        ['Chicken Tikka', 'Served with Garlic Sauce, Salad, Tikka Boti Red, Malai Boti White, Rice, and Pita Bread.', '169 k', 169,  'KKlogo.svg'],
+        ['Chicken Seekh Kabab (4 pcs)', 'Served with Salad, Bread, Garlic Sauce, Rice, and Pita Bread.', '169 k', 169,  'KKlogo.svg'],
+        ['Turkish Sujuk Kebab (4 pcs)', 'Served with Salad, Bread, Garlic Sauce, Rice, and Pita Bread.', '189 k', 189,  'KKlogo.svg'],
+        ['BBQ Chicken Leg Quarters', 'Served with Salad, Bread, Garlic Sauce, Free Pita Bread, and Free Rice.', '169 k', 169,  'KKlogo.svg'],
+        ['Chana Chaat Chickpea Chaat', '', '149 k', 149,  'KKlogo.svg'],
+        ['Panipuri Golgappa', '', '169 k', 169,  'KKlogo.svg'],
+        ['Chicken Shawarma', '', '149 k', 149,  'KKlogo.svg'],
+        ['Beef Shawarma', '', '169 k', 169,  'KKlogo.svg'],
+        ['Vegetable Shawarma', 'Served with Mayonnaise, Garlic & Mint Sauce; available as a Roll or Sandwich.', '129 k', 129,  'KKlogo.svg'],
+        ['Chicken Shawarma Platter', 'Includes Chicken, Salad, Bread, and Garlic Sauce.', '189 k', 189,  'KKlogo.svg'],
+        ['Beef Shawarma Platter', 'Available as a Roll, Sandwich, or Platter.', '219 k', 219,  'KKlogo.svg'],
+        ['Grill Vegetable Platter', 'Includes Salad, Bread, and Garlic Sauce.', '189 k', 189,  'KKlogo.svg'],
+        ['Falafel Shawarma', 'Available as a Roll or Sandwich.', '149 k', 149,  'KKlogo.svg'],
+        ['Falafel & Hummus', 'Served with Classic Bread or Homemade Bread.', '169 k', 169,  'KKlogo.svg'],
+        ['Doner Kebab', 'Served with Garlic Sauce and French Fries; available as a Roll, Sandwich, or Platter.', '169 k', 169,  'KKlogo.svg'],
+        ['Sheesh Kebab Shawarma (Chicken)', 'Served with Salad, Bread, and Garlic Sauce.', '149 k', 149,  'KKlogo.svg'],
+        ['Sheesh Kebab Shawarma (Beef)', 'Served with Salad, Bread, and Garlic Sauce.', '169 k', 169,  'KKlogo.svg'],
+        ['Classic Bread', 'Freshly baked.', '29 k', 29,  'KKlogo.svg'],
+        ['Pita Bread', 'Freshly baked.', '29 k', 29,  'KKlogo.svg']
       ]},
       { id: 'pasta', label: 'Spaghetti & Pasta', image: 'sequence/0135.jpg', items: [
-        ['Carbonara', 'Creamy spaghetti carbonara', '139-149 k', 139],
-        ['Beef Meat Ball Bolognese', 'Pasta with beef meatball bolognese', '139-149 k', 139],
-        ['Seafood Pasta', 'Pasta with seafood', '139-149 k', 139],
-        ['Tuna Chicken Pasta', 'Pasta with tuna and chicken', '139-149 k', 139],
-        ['Vegetable Pasta', 'Pasta with vegetables', '139-149 k', 139],
-        ['Puttanesca', 'Classic puttanesca pasta', '139-149 k', 139]
+        ['Carbonara', 'Beef Salami, Cream Sauce, Yellow Egg, Parmesan, Spaghetti, and Pasta.', '149 k', 149,  'KKlogo.svg'],
+        ['Beef Meat Ball Bolognese', 'Spaghetti and Pasta with a choice of Tomato Sauce or White Cream Sauce.', '149 k', 149,  'KKlogo.svg'],
+        ['Seafood', 'Parmesan, Basil, Tomato Sauce, White Cream Sauce, Spaghetti, and Pasta.', '149 k', 149,  'KKlogo.svg'],
+        ['Tuna or Chicken', 'Parmesan, Basil, Tomato Sauce, White Cream Sauce, Spaghetti, and Pasta.', '149 k', 149,  'KKlogo.svg'],
+        ['Vegetable', 'Parmesan, Basil, Tomato Sauce, White Cream Sauce, Spaghetti, and Pasta.', '139 k', 139,  'KKlogo.svg'],
+        ['Puttanesca', 'Spaghetti and Pasta.', '149 k', 149,  'KKlogo.svg']
       ]},
-      { id: 'fast-food', label: 'Fast Food & Burgers', image: 'sequence/0172.jpg', items: [
-        ['Chicken Nuggets', 'Crispy chicken nuggets', 'Ask price', 0],
-        ['Crispy Cutlet Egg Potato', 'Crispy cutlet with egg and potato', 'Ask price', 0],
-        ['French Fries', 'Fresh fries', 'Ask price', 0],
-        ['Cheese French Fries', 'Fries with cheese', 'Ask price', 0],
-        ['Crispy Fried Chicken', 'Crispy fried chicken', 'Ask price', 0],
-        ['Beef Pate Burger', 'Beef pate burger', '169 k', 169],
-        ['Chicken Pate Burger', 'Chicken pate burger', '159 k', 159],
-        ['Zinger Burger', 'Zinger burger', '159 k', 159],
-        ['Grill Chicken Burger', 'Grill chicken burger', '159 k', 159],
-        ['Mix Vere Burger', 'Mix Vere burger', '139 k', 139]
+      { id: 'fast-food', label: 'Fast Food', image: 'sequence/0172.jpg', items: [
+        ['Chicken Nuggets (6 pcs)', 'Served with fries.', '119 k', 119,  'KKlogo.svg'],
+        ['Chicken Nuggets (12 pcs)', 'Served with fries.', '299 k', 299,  'KKlogo.svg'],
+        ['Crispy Cutlet Egg Potato (6 pcs)', 'Served with fries.', '289 k', 289,  'KKlogo.svg'],
+        ['French Fries (Small)', '', '89 k', 89,  'KKlogo.svg'],
+        ['French Fries (Large)', '', '119 k', 119,  'KKlogo.svg'],
+        ['Crispy Onion & Crispy Fries (Small)', '', '149 k', 149,  'KKlogo.svg'],
+        ['Crispy Onion & Crispy Fries (Large)', '', '199 k', 199,  'KKlogo.svg'],
+        ['Cheese French Fries', 'Available as Steam Fries or Fried Fries.', '169 k', 169,  'KKlogo.svg'],
+        ['Crispy Fried Chicken (6 pcs)', 'Served with fries.', '249 k', 249,  'KKlogo.svg']
+      ]},
+      { id: 'garlic-bread', label: 'Cheese Garlic Bread', image: 'sequence/0064.jpg', items: [
+        ['Cheese Garlic Bread', 'Mozzarella, Garlic Olive oil, and Garlic Sauce.', '139 k', 139,  'KKlogo.svg'],
+        ['Chicken Cheese Garlic Bread', 'Chicken, Mozzarella, Garlic Olive oil, and Garlic Sauce.', '159 k', 159,  'KKlogo.svg'],
+        ['Beef Cheese Garlic Bread', 'Beef, Mozzarella, Garlic Olive oil, and Garlic Sauce.', '189 k', 189,  'KKlogo.svg'],
+        ['Tuna Cheese Garlic Bread', 'Tuna, Mozzarella, Garlic Olive oil, and Garlic Sauce.', '149 k', 149,  'KKlogo.svg'],
+        ['Supreme Cheese Garlic Bread (Beef)', 'Mozzarella, Garlic Olive oil, Garlic Sauce, and Mix Vegetables.', '219 k', 219,  'KKlogo.svg'],
+        ['Supreme Cheese Garlic Bread (Chicken)', 'Mozzarella, Garlic Olive oil, Garlic Sauce, and Mix Vegetables.', '199 k', 199,  'KKlogo.svg'],
+        ['Supreme Cheese Garlic Bread (Vegetable)', 'Mozzarella, Garlic Olive oil, Garlic Sauce, and Mix Vegetables.', '189 k', 189,  'KKlogo.svg']
+      ]},
+      { id: 'burgers', label: 'Burgers', image: 'sequence/0172.jpg', items: [
+        ['Beef Pate Burger', 'Served with French Fries, Garlic Sauce, and ketchup.', '169 k', 169,  'KKlogo.svg'],
+        ['Chicken Pate Burger', 'Served with French Fries, Garlic Sauce, and ketchup.', '159 k', 159,  'KKlogo.svg'],
+        ['Zinger Burger', 'Served with French Fries, Garlic Sauce, and ketchup.', '159 k', 159,  'KKlogo.svg'],
+        ['Grill Chicken Burger', 'Served with French Fries, Garlic Sauce, and ketchup.', '159 k', 159,  'KKlogo.svg'],
+        ['Mix Vege Burger', 'Served with French Fries, Garlic Sauce, and ketchup.', '139 k', 139,  'KKlogo.svg']
+      ]},
+      { id: 'pizzas', label: 'Pizza', image: 'sequence/0014.jpg', items: [
+        ['Marinara', 'Tomato Sauce, Garlic oil, Oregano (No Cheese).', '109 k', 109, 'images/pizzas/marinara.png'],
+        ['Margherita', 'Tomato Sauce, Mozzarella, Basil.', '129 k', 129, 'images/pizzas/margherita.png'],
+        ['4Cheese', 'Tomato Sauce, Mozzarella, Brie, Gorgonzola, Grana.', '209 k', 209, 'images/pizzas/four_cheese.png'],
+        ['Fungi', 'Tomato Sauce, Mozzarella, Basil, Mushroom.', '189 k', 189, 'images/pizzas/fungi.png'],
+        ['Cheese Corn', 'Tomato Sauce, Mozzarella, Pineapple, Corn.', '189 k', 189, 'images/pizzas/cheese_corn.png'],
+        ['Nutella', 'Mix Dried Fruits topping.', '169 k', 169, 'images/pizzas/nutella.png'],
+        ['Mix Vegetables', 'Green peas, Corn, Carrot, Coriander.', '189 k', 189,  'KKlogo.svg'],
+        ['Fresh Vegetariana', 'Potato, Capsicum, Eggplant, Zucchini.', '169 k', 169,  'KKlogo.svg'],
+        ['Supreme Vegetable', 'Fresh Mix Vegetables, Black Olive, Oregano, Jalapenos.', '199 k', 199,  'KKlogo.svg'],
+        ['Falafel & Hummus', 'Falafel, Hummus, Black Olives (No Cheese).', '199 k', 199,  'KKlogo.svg'],
+        ['Beef Salami', 'Tomato Sauce, Mozzarella, Beef Salami.', '199 k', 199,  'KKlogo.svg'],
+        ['Brie/Gorgonzola', 'Brie, Capsicum, Gorgonzola, Onions.', '209 k', 209,  'KKlogo.svg'],
+        ['Napoli / Sicilian', 'Anchovies, Capers, Oregano, Black Olives.', '209 k', 209,  'KKlogo.svg'],
+        ['Ton no Capola', 'Tuna, Onion, and one additional ingredient of choice.', '189 k', 189,  'KKlogo.svg'],
+        ['Frutti Di Mare', 'Tomato Sauce, Mozzarella, Mix Seafood, Black Olives.', '209 k', 209,  'KKlogo.svg'],
+        ['Shrimp & Crab Stick', 'Tomato Sauce, Mozzarella, Shrimp, Crab Stick.', '209 k', 209,  'KKlogo.svg'],
+        ['Chicken Kebab', 'Tomato Sauce, Mozzarella, Shawarma Chicken, Coriander.', '189 k', 189,  'KKlogo.svg'],
+        ['BBQ Chicken', 'Tomato Sauce, Capsicum, Eggplant, Zucchini.', '209 k', 209,  'KKlogo.svg'],
+        ['Supreme Chicken', 'Tomato Sauce, Mozzarella, Fajita Chicken, Bell pepper, Oregano.', '209 k', 209,  'KKlogo.svg'],
+        ['Hot & Spicy Chicken', 'Tomato Sauce, Mozzarella, Mix Vegetable, Fajita Chicken, Jalapeno.', '209 k', 209,  'KKlogo.svg'],
+        ['Seekh Kabab Pizza (Chicken)', 'Tomato Sauce, Mozzarella, Black Olives, Capsicum, Fresh tomato, Onion.', '219 k', 219,  'KKlogo.svg'],
+        ['Seekh Kabab Pizza (Beef)', 'Tomato Sauce, Mozzarella, Black Olives, Capsicum, Fresh tomato, Onion.', '249 k', 249,  'KKlogo.svg'],
+        ['Hawaiian (Chicken)', 'Tomato Sauce, Mozzarella, Pineapple, Beef Salami.', '119 k', 119,  'KKlogo.svg'],
+        ['Hawaiian (Beef)', 'Tomato Sauce, Mozzarella, Pineapple, Beef Salami.', '209 k', 209,  'KKlogo.svg'],
+        ['Supreme Beef Salami', 'Tomato Sauce, Mozzarella, Beef Salami, Beef Sausage, Black Olives, Capsicum, Onion, Mushroom, Oregano.', '249 k', 249,  'KKlogo.svg'],
+        ['4 Season (1)', 'Tomato Sauce, Mozzarella, Beef Salami, Mushroom, Black Olive, Fresh tomato.', '199 k', 199,  'KKlogo.svg'],
+        ['4 Season (2)', 'Tomato Sauce, Mozzarella, Chicken, Mushroom, Black Olive, Fresh tomato.', '209 k', 209,  'KKlogo.svg'],
+        ['Beef Hot & Spicy', 'Tomato Sauce, Mozzarella, Mix Vegetable, Beef Salami, Beef Sausage, Jalapeno.', '249 k', 249,  'KKlogo.svg'],
+        ['Mayonnaise Pizza (Chicken)', 'Tomato Sauce, Mozzarella, Mayonnaise.', '199 k', 199,  'KKlogo.svg'],
+        ['Mayonnaise Pizza (Beef)', 'Tomato Sauce, Mozzarella, Mayonnaise.', '219 k', 219,  'KKlogo.svg'],
+        ['French Fries Pizza', 'Tomato Sauce, Mozzarella, topped with French fries.', '189 k', 189,  'KKlogo.svg'],
+        ['Beef Meatball', 'Tomato Sauce, Mozzarella, Beef Meatball, Beef Sausage, Black Olive.', '209 k', 209,  'KKlogo.svg'],
+        ['Topping Options', 'Select your own toppings with Tomato Sauce and Mozzarella. Plus cost of toppings.', '129 k', 129,  'KKlogo.svg']
+      ]},
+      { id: 'toppings', label: 'Pizza Ingredients (Add-ons)', image: 'sequence/0044.jpg', items: [
+        ['Vegetables', 'French Fries, Fried Onion, Coriander, Fresh Chili, Pineapple, Oregano, Fresh Tomato, Black Olives, Basil, Capsicum, Capers, Onion, Potato, Mushroom, Zucchini, Eggplant, Jalapeno, Corn.', '29 k', 29,  'KKlogo.svg'],
+        ['Sauces', 'Dressing, Garlic Sauce, Ketchup Sauce.', '29 k', 29,  'KKlogo.svg'],
+        ['Meat', 'Anchovies, Tuna Fish, Crab Stick, Shrimp, Mix Seafood, Beef Meatball, Beef Sausage, Beef Salami, Beef Seekh Kabab, Shredded Chicken, Chicken Sausage, Shawarma Chicken, Grill Chicken, Fajita Chicken, BBQ Chicken, Mix Sausage.', '49 k', 49,  'KKlogo.svg'],
+        ['Cheese', 'Mozzarella, Cream Cheese, Parmesan, Blue Cheese, Gorgonzola, Cheddar.', '49 k', 49,  'KKlogo.svg']
+      ]},
+      { id: 'rice', label: 'Rice', image: 'sequence/0109.jpg', items: [
+        ['Biryani (Mutton)', '', '209 k', 209,  'KKlogo.svg'],
+        ['Biryani (Chicken)', '', '179 k', 179,  'KKlogo.svg'],
+        ['Biryani (Beef)', '', '189 k', 189,  'KKlogo.svg'],
+        ['Biryani (Vegetable)', '', '149 k', 149,  'KKlogo.svg'],
+        ['Palao / Pulao (Mutton)', '', '209 k', 209,  'KKlogo.svg'],
+        ['Palao / Pulao (Chicken)', '', '169 k', 169,  'KKlogo.svg'],
+        ['Palao / Pulao (Beef)', '', '189 k', 189,  'KKlogo.svg'],
+        ['Palao / Pulao (Vegetable)', '', '149 k', 149,  'KKlogo.svg'],
+        ['Egg Fried Rice', 'Includes Egg, Mix, and Vegetables.', '99 k', 99,  'KKlogo.svg'],
+        ['Chicken Fried Rice', 'Includes Chicken, Egg, and Mix Vegetables.', '109 k', 109,  'KKlogo.svg'],
+        ['Beef Fried Rice', 'Includes Beef, Egg, and Mix Vegetables.', '119 k', 119,  'KKlogo.svg'],
+        ['Seafood Fried Rice', 'Includes Seafood, Egg, and Mix Vegetables.', '119 k', 119,  'KKlogo.svg'],
+        ['Steam Rice (Basmati)', '', '89 k', 89,  'KKlogo.svg'],
+        ['Steam Rice (Lao)', '', '69 k', 69,  'KKlogo.svg']
       ]}
     ];
     const reviews = [
@@ -192,7 +243,7 @@
           <header className="sticky top-0 z-50 border-b-2 border-coal bg-cream/95 text-coal backdrop-blur">
             <nav className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
               <a href="#home" className="flex shrink-0 items-center gap-2" aria-label="King Khans home">
-                <img src="KKlogo.png" alt="King Khans logo" className="h-12 w-12 rounded-full object-cover toon-soft" />
+                <img src="KKlogo.svg" alt="King Khans logo" className="h-12 w-12 rounded-full object-cover toon-soft" />
                 <span className="text-lg font-black tracking-wide text-ember">King Khans</span>
               </a>
               <button onClick={() => setOpen(!open)} className="ml-auto rounded-full bg-saffron px-4 py-2 text-sm font-black text-coal toon-soft lg:hidden" aria-expanded={open}>Menu</button>
@@ -207,48 +258,29 @@
     }
 
     function Hero() {
-      const heroRef = useRef(null);
-      const [frame, setFrame] = useState(0);
-      useEffect(() => {
-        let ticking = false;
-        function updateFrame() {
-          if (!heroRef.current) return;
-          const rect = heroRef.current.getBoundingClientRect();
-          const scrollable = rect.height - window.innerHeight;
-          const progress = Math.min(1, Math.max(0, -rect.top / Math.max(scrollable, 1)));
-          setFrame(Math.round(progress * (sequenceFrames.length - 1)));
-          ticking = false;
-        }
-        function onScroll() {
-          if (!ticking) {
-            window.requestAnimationFrame(updateFrame);
-            ticking = true;
-          }
-        }
-        sequenceFrames.slice(0, 24).forEach(src => {
-          const image = new Image();
-          image.src = src;
-        });
-        updateFrame();
-        window.addEventListener('scroll', onScroll, { passive: true });
-        window.addEventListener('resize', onScroll);
-        return () => {
-          window.removeEventListener('scroll', onScroll);
-          window.removeEventListener('resize', onScroll);
-        };
-      }, []);
       return (
-        <section id="home" ref={heroRef} className="relative h-[230vh] bg-black text-white">
-          <div className="sticky top-0 min-h-screen overflow-hidden">
-            <img src={sequenceFrames[frame]} alt={`King Khans scroll animation frame ${frame + 1}`} className="hero-frame absolute inset-0 h-full w-full object-cover" />
-            <div style={{backgroundColor: 'rgba(0,0,0,0.23)'}} className="absolute inset-0"></div>
-            <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/92"></div>
-            <div className="absolute bottom-5 left-1/2 z-20 h-2 w-48 -translate-x-1/2 overflow-hidden rounded-full border border-white/40 bg-white/20">
-              <div className="h-full bg-saffron" style={{ width: `${(frame / (sequenceFrames.length - 1)) * 100}%` }}></div>
-            </div>
+        <section id="home" className="relative h-screen bg-black text-white overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <iframe
+              className="absolute top-0 left-1/2 min-w-full min-h-full"
+              src="https://www.youtube.com/embed/q6SE1SnAa-k?autoplay=1&mute=1&controls=0&loop=1&playlist=q6SE1SnAa-k&playsinline=1&enablejsapi=1"
+              frameBorder="0"
+              allow="autoplay; encrypted-media"
+              style={{
+                width: '100vw',
+                height: '56.25vw', /* 16:9 ratio */
+                minHeight: '100%',
+                minWidth: '177.77vh',
+                transform: 'translate(-50%, 0) scale(1.15)', /* Zoom in and align top to cut off bottom 50px */
+                transformOrigin: 'top center',
+              }}
+            ></iframe>
           </div>
-          <div className="sticky top-0 z-10 -mt-[100vh] mx-auto flex min-h-screen max-w-5xl flex-col items-center justify-center px-4 py-20 text-center">
-            <img src="KKlogo.png" alt="King Khans crown pizza logo" className="mb-5 h-28 w-28 rounded-full object-cover toon-outline sm:h-36 sm:w-36" />
+          <div style={{backgroundColor: 'rgba(0,0,0,0.23)'}} className="absolute inset-0"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-black/92"></div>
+          
+          <div className="relative z-10 mx-auto flex h-full max-w-5xl flex-col items-center justify-center px-4 text-center">
+            <img src="KKlogo.svg" alt="King Khans crown pizza logo" className="mb-5 h-28 w-28 rounded-full object-cover toon-outline sm:h-36 sm:w-36" />
             <p className="mb-3 rounded-full bg-saffron px-5 py-2 text-sm font-black uppercase tracking-[.18em] text-coal toon-soft">King Pizzaeria Restaurant</p>
             <h1 className="text-5xl font-black leading-none text-crown [text-shadow:0_5px_0_#1b0e09] sm:text-7xl lg:text-8xl">King Khans</h1>
             <p className="mt-5 text-xl font-black text-amber-100 sm:text-3xl">Best Pizza &bull; Kebabs &bull; Shawarma in Laos</p>
@@ -258,7 +290,6 @@
               <a href="#cart" className="rounded-full bg-ember px-7 py-3 text-base font-black text-white toon-outline">Order Now</a>
               <a href={FOODPANDA} target="_blank" rel="noopener" className="rounded-full bg-white px-7 py-3 text-base font-black text-ember toon-outline">Foodpanda</a>
             </div>
-            <p className="mt-8 rounded-full bg-black/45 px-4 py-2 text-sm font-black text-amber-100 backdrop-blur">Scroll to animate the kitchen sequence</p>
           </div>
         </section>
       );
@@ -284,8 +315,8 @@
     function Menu({ addToCart }) {
       return (
         <section id="menu" className="mx-auto max-w-7xl px-4 py-16 text-white">
-          <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-            <div>
+          <div className="mb-8">
+            <div className="mb-6">
               <p className="text-sm font-black uppercase tracking-[.18em] text-ember">Full Menu</p>
               <h2 className="mt-2 text-4xl font-black tracking-tight sm:text-5xl">Choose your feast</h2>
             </div>
@@ -304,11 +335,11 @@
                   </div>
                 </div>
                 <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
-                  {section.items.map(([name, desc, priceLabel, price], index) => (
+                  {section.items.map(([name, desc, priceLabel, price, imgPath], index) => (
                     <article key={`${section.id}-${name}`} className="menu-card fire-hover overflow-hidden rounded-2xl bg-white text-coal toon-soft">
                       <div className="relative">
-                        <img src={section.image} alt={name} loading="lazy" className="h-44 w-full object-cover" />
-                        <span className="absolute right-3 top-3 rounded-full bg-saffron px-3 py-1 text-sm font-black text-coal toon-soft">{priceLabel}</span>
+                        <img src={imgPath || section.image} alt={name} loading="lazy" className="h-44 w-full object-cover" />
+                        <span className="absolute right-3 top-3 bg-saffron text-xs font-black text-coal burst-shape">{priceLabel}</span>
                       </div>
                       <div className="p-5">
                         <h4 className="text-xl font-black">{index + 1}. {name}</h4>
@@ -395,8 +426,8 @@
               <p className="mt-4 text-lg leading-8 text-white/75">King Khans brings together pizza, kebabs, shawarma, rice dishes, pasta, burgers, and fresh sides for families, travelers, and late-night cravings in Laos.</p>
               <a href="#contact" className="mt-6 inline-flex rounded-full bg-ember px-6 py-3 font-black text-white toon-soft">Contact Us</a>
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              {['sequence/0024.jpg', 'sequence/0070.jpg', 'sequence/0128.jpg', 'sequence/0172.jpg'].map((src, index) => <img key={src} src={src} alt={`King Khans featured food ${index + 1}`} className="h-48 w-full rounded-2xl object-cover toon-soft" />)}
+            <div className="flex justify-center md:justify-end">
+              <img src="KKlogo.svg" alt="King Khans logo" className="h-72 w-72 rounded-full object-cover toon-outline" />
             </div>
           </section>
           <section className="bg-black px-4 py-16 text-white">
@@ -437,25 +468,33 @@
     function ReservationContact() {
       return (
         <>
-          <section id="reservation" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 text-white lg:grid-cols-[.85fr_1.15fr]">
-            <div>
-              <p className="text-sm font-black uppercase tracking-[.18em] text-ember">Reservations</p>
-              <h2 className="mt-2 text-4xl font-black">Book a table</h2>
-              <p className="mt-4 text-white/75">Reserve a table for lunch, dinner, or a group meal. We will confirm by phone.</p>
+          <section id="reservation" className="mx-auto max-w-7xl px-4 py-16 text-white">
+            <div className="mb-8">
+              <p className="text-sm font-black uppercase tracking-[.18em] text-ember">Entertainment</p>
+              <h2 className="mt-2 text-4xl font-black">Weekly Events</h2>
             </div>
-            <form className="grid gap-4 rounded-2xl bg-white p-5 text-coal toon-soft" onSubmit={e => { e.preventDefault(); alert('Thanks! King Khans will contact you to confirm.'); }}>
-              <div className="grid gap-4 sm:grid-cols-3">
-                <label className="text-sm font-black">Date<input required type="date" className="mt-1 w-full rounded-xl border-2 border-amber-200 px-3 py-3" /></label>
-                <label className="text-sm font-black">Time<input required type="time" className="mt-1 w-full rounded-xl border-2 border-amber-200 px-3 py-3" /></label>
-                <label className="text-sm font-black">People<input required min="1" defaultValue="2" type="number" className="mt-1 w-full rounded-xl border-2 border-amber-200 px-3 py-3" /></label>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-2xl bg-white p-6 text-coal toon-soft">
+                <div className="mb-3 text-2xl">🎯</div>
+                <h3 className="text-xl font-black">Monday Bingo</h3>
+                <p className="mt-2 text-sm text-stone-600">Join us for exciting bingo night with prizes! 7 PM - 10 PM</p>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <label className="text-sm font-black">Name<input required type="text" className="mt-1 w-full rounded-xl border-2 border-amber-200 px-3 py-3" /></label>
-                <label className="text-sm font-black">Phone<input required type="tel" className="mt-1 w-full rounded-xl border-2 border-amber-200 px-3 py-3" /></label>
+              <div className="rounded-2xl bg-white p-6 text-coal toon-soft">
+                <div className="mb-3 text-2xl">🧠</div>
+                <h3 className="text-xl font-black">Wednesday Quiz</h3>
+                <p className="mt-2 text-sm text-stone-600">Test your knowledge and win amazing rewards! 7:30 PM - 9 PM</p>
               </div>
-              <label className="text-sm font-black">Notes<textarea rows="4" className="mt-1 w-full rounded-xl border-2 border-amber-200 px-3 py-3"></textarea></label>
-              <button className="rounded-full bg-ember px-6 py-3 font-black text-white toon-soft">Book Table</button>
-            </form>
+              <div className="rounded-2xl bg-white p-6 text-coal toon-soft">
+                <div className="mb-3 text-2xl">🎤</div>
+                <h3 className="text-xl font-black">Friday Karaoke</h3>
+                <p className="mt-2 text-sm text-stone-600">Sing your heart out with friends and family! 8 PM - 11 PM</p>
+              </div>
+              <div className="rounded-2xl bg-white p-6 text-coal toon-soft">
+                <div className="mb-3 text-2xl">✨</div>
+                <h3 className="text-xl font-black">Weekend Specials</h3>
+                <p className="mt-2 text-sm text-stone-600">Enjoy exclusive discounts and special menu items all weekend!</p>
+              </div>
+            </div>
           </section>
           <section id="contact" className="mx-auto grid max-w-7xl gap-8 px-4 py-16 text-white lg:grid-cols-2">
             <div>
@@ -467,9 +506,9 @@
                 <p><strong>Foodpanda:</strong> <a className="font-black text-ember" href={FOODPANDA} target="_blank" rel="noopener">King Pizzaeria Restaurant</a></p>
                 <p><strong>Menu:</strong> Pizza, kebabs, shawarma, pasta, rice, burgers, garlic bread, and sides.</p>
               </div>
-              <form className="mt-8 flex flex-col gap-3 sm:flex-row" onSubmit={e => { e.preventDefault(); alert('Thanks for joining the King Khans newsletter.'); }}>
+              <form className="mt-8 flex flex-col gap-3 sm:flex-row" action="https://formspree.io/f/xldryydk" method="POST">
                 <label className="sr-only" htmlFor="newsletterEmail">Email address</label>
-                <input id="newsletterEmail" type="email" required placeholder="Email for offers" className="min-h-12 flex-1 rounded-full border-2 border-coal bg-white px-5 text-coal" />
+                <input id="newsletterEmail" type="email" name="email" required placeholder="Email for offers" className="min-h-12 flex-1 rounded-full border-2 border-coal bg-white px-5 text-coal" />
                 <button className="rounded-full bg-saffron px-6 py-3 font-black text-coal toon-soft">Newsletter Signup</button>
               </form>
             </div>
@@ -487,7 +526,7 @@
           <footer className="bg-coal px-4 py-10 text-white">
             <div className="mx-auto flex max-w-7xl flex-col gap-5 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-3">
-                <img src="KKlogo.png" alt="King Khans logo" className="h-12 w-12 rounded-full object-cover" />
+                <img src="KKlogo.svg" alt="King Khans logo" className="h-12 w-12 rounded-full object-cover" />
                 <div>
                   <p className="text-xl font-black">King Khans</p>
                   <p className="text-sm text-white/65">King Pizzaeria Restaurant</p>
